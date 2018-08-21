@@ -21,9 +21,13 @@ $(document).ready(function() {
   {
     event.preventDefault();
     var nBTN = $("#cartoon-input").val().trim();
-    gButtons.push(nBTN);
-    $("#sButtons").empty();
-    buildButtons();
+    if($.inArray(nBTN,gButtons) === -1)
+    {
+      gButtons.push(nBTN);
+      $("#sButtons").empty();
+      buildButtons();
+    }
+    nBTN.val = "";
 
   });
 
@@ -40,21 +44,26 @@ $(document).ready(function() {
         var results = response.data;
         $("#sImages").empty();
         for (var i = 0; i < results.length; i++) {
-
           var rating = results[i].rating;
 
-          var p = $("<p>").text("Rating: " + rating);
-
-          var itmImage = $("<img class='gif'>");
+          var iDiv = $("<div class='imgContainer'>");
+          var txt = $("<p>");
+          var itmImage = $("<img class='gif img-responsive'>");
           itmImage.attr("src", results[i].images.fixed_height.url);
-          $("#sImages").append(itmImage);
+          itmImage.attr("data-still", results[i].images.fixed_height_still.url);
+          itmImage.attr("data-animate", results[i].images.fixed_height.url);
+          itmImage.attr("data-state", "animate");
+          txt.text("Rating: " + rating);
+          iDiv.append(itmImage);
+          iDiv.append(txt);
+          $("#sImages").append(iDiv);
         }
       });
   });
 
 
 
-  $(".gif").on("click", function() {
+  $(document).on("click",".gif" , function() {
     // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
     var state = $(this).attr("data-state");
     // If the clicked image's state is still, update its src attribute to what its data-animate value is.
